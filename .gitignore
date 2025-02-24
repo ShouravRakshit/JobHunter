@@ -1,0 +1,79 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Django/migrations (optional: ignore only uncommitted migrations)
+**/migrations/
+!**/migrations/__init__.py
+
+# Django secret keys (if stored in a file)
+.env
+*.env
+
+# Logs
+*.log
+logs/
+debug.log
+
+# Database files
+db.sqlite3
+*.db
+*.sql
+
+# Compiled files
+*.so
+*.dll
+*.dylib
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Node.js dependencies (for frontend)
+frontend/node_modules/
+frontend/.next/
+frontend/.nuxt/
+frontend/dist/
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Static and media files (if generated dynamically)
+staticfiles/
+media/
+
+# Chrome Driver & Other Downloaded Binaries
+chrome-win64/
+
+# Deployment
+/deployment/
+docker-compose.override.yml
+Dockerfile
+nginx.conf
+gunicorn.conf.py
+
+# Ignore data storage
+data/
+*.pkl
+*.json
+
+# Ignore project diagrams
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.gif
+
+# Ignore embeddings & models
+embeddings.pkl
+nlp_models/*.pkl
