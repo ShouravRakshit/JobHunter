@@ -4,7 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from workday_urls import company_urls
 
 # Function to scrape a Workday jobs listing page
@@ -14,7 +16,13 @@ def scrape_workday(driver, company_name, start_url):
 
     # load the main listing page
     driver.get(start_url)
-    time.sleep(3)  # sleeping for 3 seconds to allow the page to load
+    try:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "a[data-automation-id='jobTitle']"))
+        )
+    except Exception as e:
+        print(f"Could not find any job links for {company_name}: {e}")
+        return results  # Return empty list
 
     # parse the page with BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "html.parser")
