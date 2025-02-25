@@ -7,29 +7,22 @@ from urllib.parse import urljoin
 
 from workday_urls import company_urls
 
+# Function to scrape a Workday jobs listing page
 def scrape_workday(driver, company_name, start_url):
-    """
-    1) Load the 'list' page of job postings.
-    2) Extract job-card links (or job IDs) from that page.
-    3) For each job, navigate to the detail page and parse the data.
-    4) Return a list of dictionaries with the fields you want.
-    """
+
     results = []
 
-    # 1) Load the main listing page
+    # load the main listing page
     driver.get(start_url)
-    time.sleep(3)  # rudimentary wait; better to use WebDriverWait
+    time.sleep(3)  # sleeping for 3 seconds to allow the page to load
 
-    # 2) Parse the page with BeautifulSoup
+    # parse the page with BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "html.parser")
 
-    # Example selector for job links:
-    # Many Workday pages have <a data-automation-id="jobTitle" ...>
+    # getting the job titles
     job_link_tags = soup.select('a[data-automation-id="jobTitle"]')
 
-    # Gather the partial href or full link from each job card
-    # Some sites include only a relative path, e.g. "/en-US/BDO/job/Calgary-AB/..."
-    # so you might need to build the absolute URL or just do driver.get() with the partial link appended.
+    # Loop over each job link
     for link_tag in job_link_tags:
         # e.g. retrieve the job detail URL
         partial_href = link_tag.get("href")
@@ -39,31 +32,41 @@ def scrape_workday(driver, company_name, start_url):
         
         job_url = urljoin(start_url, partial_href)
         print("job url: ", job_url)
-        # 3) Now open each job’s detail page
+        # open each job’s detail page
         driver.get(job_url)
         time.sleep(2)  # Wait for dynamic content to load
 
         detail_soup = BeautifulSoup(driver.page_source, "html.parser")
 
-        # Extract relevant fields.  For example:
+        # extract job details
         # Title
         title_el = detail_soup.select_one('[data-automation-id="jobPostingHeader"]')
         job_title = title_el.get_text(strip=True) if title_el else None
 
         # Location
-        location_el = detail_soup.select_one('[data-automation-id="location"]')
-        job_location = location_el.get_text(strip=True) if location_el else None
+        location_block = detail_soup.select_one('[data-automation-id="locations"]')
+        if location_block:
+            location_dds = location_block.select('dd')
+            if location_dds:
+                job_location = ", ".join(dd.get_text(strip=True) for dd in location_dds)
+            else:
+                job_location = None
+        else:
+            job_location = None
 
-        # Posted date (some pages have data-automation-id="jobPostingPostedDate" or
-        # you might find it in a span that says "Posted X Days Ago")
-        posted_date_el = detail_soup.find("span", text=lambda t: t and "Posted" in t)
-        posted_date = posted_date_el.get_text(strip=True) if posted_date_el else None
+        # Posted date 
+        posted_block = detail_soup.select_one('[data-automation-id="postedOn"], [data-automation-id="time"]')
+        if posted_block:
+            posted_dd = posted_block.select_one('dd')
+            posted_date = posted_dd.get_text(strip=True) if posted_dd else None
+        else:
+            posted_date = None
 
-        # Job description might be in a big <div data-automation-id="jobPostingDescription">
+        # Job description 
         desc_el = detail_soup.select_one('[data-automation-id="jobPostingDescription"]')
         job_desc = desc_el.get_text(" ", strip=True) if desc_el else None
 
-        # As an example, we store each job as a dictionary
+        # storing the job details in a list
         results.append({
             "company": company_name,
             "url": job_url,
@@ -77,14 +80,14 @@ def scrape_workday(driver, company_name, start_url):
 
 
 def main():
-    # Set up headless Chrome (adjust to your liking)
+    # Set up headless Chrome
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
 
     all_jobs = []
 
-    # Loop over each Workday site in your config
+    # looping over all the items in the company_urls list
     for entry in company_urls:
         company_name = entry["company_name"]
         start_url = entry["url"]
@@ -98,7 +101,7 @@ def main():
 
     driver.quit()
 
-    # Example: write results to CSV
+    # saving the results to a CSV file
     with open("workday_jobs.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["company","url","title","location","posted_date","description"])
         writer.writeheader()
