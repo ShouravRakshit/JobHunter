@@ -34,57 +34,15 @@ company_urls = [
     },
     {
         "company_name": "Alberta Blue Cross",
-        "url": ""
+        "url": "https://abbluecross.wd3.myworkdayjobs.com/careers"
     },
     {
-
+        "company_name": "BJ Energy Solutions",
+        "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=d7900303-9f39-48e7-ae7a-b5d5ec6e6da9&ccId=19000101_000001&lang=en_CA"
     },
-    {
-
-    },
-    {
-
-    },
-    {
-        
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
-    },
-    {
-
+    {   
+        "company_name": "AgeCare",
+        "url": "https://agecare.wd10.myworkdayjobs.com/AgeCare_Careers_External",
     },
         
 ]
