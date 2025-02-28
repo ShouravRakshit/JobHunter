@@ -204,11 +204,9 @@ def scrape_workday(driver, company_name, start_url):
 
 def main():
     chrome_options = Options()
-    # Uncomment the line below if you want to run headless
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
     
-    # Set a larger window size to make sure all elements are visible
     driver.set_window_size(1920, 1080)
 
     all_jobs = []
@@ -227,7 +225,7 @@ def main():
 
     driver.quit()
 
-    # Save to CSV
+    # saving to CSV
     with open("workday_jobs.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=[
             "company","url","title","posted_date","location","description"
