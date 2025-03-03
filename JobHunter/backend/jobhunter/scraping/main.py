@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from workday_urls import company_urls
 from bs4 import BeautifulSoup
+from scrape_alberta_health import scrape_alberta_health
 
 
 def scrape_workday(driver, company_name, start_url):
@@ -20,7 +21,6 @@ def scrape_workday(driver, company_name, start_url):
     prev_out_text = None  
 
     while True:
-        # Parse the Listing Page ---
         print(f"\nProcessing page {page_num}...")
         
         # Wait for the page to fully load
@@ -205,11 +205,13 @@ def scrape_workday(driver, company_name, start_url):
 def main():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--ignore-certificate-errors")
+    chrome_options.add_argument("--ignore-ssl-errors")
+    chrome_options.add_argument("--allow-insecure-localhost")
     driver = webdriver.Chrome(options=chrome_options)
-    
-    driver.set_window_size(1920, 1080)
 
     all_jobs = []
+
 
     for entry in company_urls:
         name = entry["company_name"]

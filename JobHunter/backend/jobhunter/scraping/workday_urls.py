@@ -1,11 +1,11 @@
 company_urls = [
     {
-        "company_name": "BDO Canada ",
-        "url": "https://bdo.wd3.myworkdayjobs.com/en-US/BDO/"
+        "company_name": "Best Buy Canada",
+        "url": "https://bestbuycanada.wd3.myworkdayjobs.com/BestBuyCA_Career"
     },
     {
-        "company_name":"Alberta Health Services",  
-        "url": "https://careers.albertahealthservices.ca/"
+        "company_name": "BDO Canada ",
+        "url": "https://bdo.wd3.myworkdayjobs.com/en-US/BDO/"
     },
     {
         "company_name": "Berkeley Payment Solutions Inc.",
