@@ -1,5 +1,49 @@
 company_urls = [
     {
+        "company_name": "iko industries",
+        "url": "https://iko.wd3.myworkdayjobs.com/en-US/IKO_Careers"
+    },
+    {   
+        "company_name": "cogeco",
+        "url": "https://cogeco.wd3.myworkdayjobs.com/Cogeco_Careers"
+    },
+    {
+        "company_name": "medavie blue cross",
+        "url": "https://medaviehs.wd10.myworkdayjobs.com/en-US/Medavie_External"
+    },
+    {
+        "company_name": "Desijardins",
+        "url": "https://desjardins.wd10.myworkdayjobs.com/en-US/Desjardins"
+    },
+    {   
+        "company_name": "Extendicare",
+        "url":"https://extendicare.wd10.myworkdayjobs.com/Extendicare2023"
+    },
+    {
+        "company_name": "Aviva Canada",
+        "url": "https://aviva.wd1.myworkdayjobs.com/en-US/External"
+    },
+    {
+        "company_name": "Irving Oil",
+        "url": "https://irvingoil.wd3.myworkdayjobs.com/en-US/IOL_Careers_Primary"
+    },
+    {
+        "company_name": "Interac",
+        "url": "https://interac.wd3.myworkdayjobs.com/Interac"
+    },
+    {
+        "company_name": "Enbridge",
+        "url": "https://enbridge.wd3.myworkdayjobs.com/enbridge_careers"
+    },
+    {
+        "company_name": "Workday",
+        "url": "https://workday.wd5.myworkdayjobs.com/en-US/Workday/jobs?source=Careers_Website"
+    },
+    {
+        "company_name": "Real Canadian Tire",
+        "url": "https://canadiantirecorporation.wd3.myworkdayjobs.com/en-US/Enterprise_External_Careers_Site/"
+    },
+    {
         "company_name": "Best Buy Canada",
         "url": "https://bestbuycanada.wd3.myworkdayjobs.com/BestBuyCA_Career"
     },
@@ -8,37 +52,12 @@ company_urls = [
         "url": "https://bdo.wd3.myworkdayjobs.com/en-US/BDO/"
     },
     {
-        "company_name": "Berkeley Payment Solutions Inc.",
-        "url": "https://jobs.berkeleypayment.com/jobs/Careers"
-    },
-    {
-        "company_name": "Jardeg",
-        "url": "https://jobs.construction-benefits.com/Jardeg-Construction/search/?createNewAlert=false&q=&locationsearch="
-    },
-
-    {
-        "company_name": "Sobeys",
-        "url": "https://jobs.sobeyscareers.com/sitemap.xml"
-    },
-    {
-        "company_name": "AMTRA Solutions",
-        "url": "https://amtrasolutions.com/careers/"
-    },
-    {
-        "company_name": "AMTRA Solutions",
-        "url": "https://www.amtrasolutions.com/careers"
-    },
-    {
         "company_name":"Keyera",
         "url":"https://keyera.wd3.myworkdayjobs.com/en-US/Keyera_Careers/"
     },
     {
         "company_name": "Alberta Blue Cross",
         "url": "https://abbluecross.wd3.myworkdayjobs.com/careers"
-    },
-    {
-        "company_name": "BJ Energy Solutions",
-        "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=d7900303-9f39-48e7-ae7a-b5d5ec6e6da9&ccId=19000101_000001&lang=en_CA"
     },
     {   
         "company_name": "AgeCare",
@@ -72,15 +91,7 @@ company_urls = [
         "company_name": "Enmax",
         "url": "https://enmax.wd3.myworkdayjobs.com/ENMAXCareers/jobs"
     },
-    {
-        "company_name": "Pembina Pipeline",
-        "url": "https://pembina.wd3.myworkdayjobs.com/en-US/Pembina_Careers"
-    },
-    {
-        "company_name": "Imperial Oil",
-        "url": "https://exxonmobil.wd5.myworkdayjobs.com/ImperialOil_Careers"
-    },
-    
+  
     {
         "company_name": "TD Insurance",
         "url": "https://td.wd3.myworkdayjobs.com/en-US/TD_Bank_Careers"
@@ -89,10 +100,6 @@ company_urls = [
     {
         "company_name": "CIBC",
         "url": "https://cibc.wd3.myworkdayjobs.com/search"
-    },
-    {
-        "company_name": "Scotiabank",
-        "url": "https://scotiabank.wd3.myworkdayjobs.com/Scotiabank"
     },
     {
         "company_name": "BMO",

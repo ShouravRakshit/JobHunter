@@ -9,7 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from workday_urls import company_urls
 from bs4 import BeautifulSoup
-from scrape_alberta_health import scrape_alberta_health
 
 
 def scrape_workday(driver, company_name, start_url):
@@ -214,6 +213,7 @@ def main():
 
 
     for entry in company_urls:
+        print("The length of company_urls is: ", len(company_urls))
         name = entry["company_name"]
         url = entry["url"]
         print(f"\nScraping {name} from {url}")
