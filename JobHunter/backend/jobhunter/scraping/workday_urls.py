@@ -1,5 +1,13 @@
 company_urls = [
     {
+        "company_name": "Ledcor",
+        "url": "https://ledcor.wd3.myworkdayjobs.com/en-US/Ledcor_External"
+    },
+    {
+        "company_name": "Plains Midstream Canada",
+        "url": "https://plains.wd1.myworkdayjobs.com/en-US/Plains"
+    },
+    {
         "company_name": "iko industries",
         "url": "https://iko.wd3.myworkdayjobs.com/en-US/IKO_Careers"
     },

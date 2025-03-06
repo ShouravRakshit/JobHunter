@@ -7,199 +7,108 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from workday_urls import company_urls
+
 from bs4 import BeautifulSoup
+from workday_urls import company_urls
 
-
-def scrape_workday(driver, company_name, start_url):
-    results = []
+def gather_all_workday_links(driver, start_url):
+    
+    job_urls = {}  # key = job URL, value = page number
     driver.get(start_url)
-    time.sleep(2)  # wait for page to load
+    time.sleep(2)  # Allow page to load
 
     page_num = 1
-    prev_out_text = None  
 
     while True:
         print(f"\nProcessing page {page_num}...")
-        
-        # Wait for the page to fully load
-        try:
-            WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "[data-automation-id='jobOutOfText']"))
-            )
-        except:
-            print("Couldn't find jobOutOfText element. Page may be empty or different format.")
-        
-        # Get updated page source after waiting
         soup = BeautifulSoup(driver.page_source, "html.parser")
-
-        job_out_el = soup.select_one('[data-automation-id="jobOutOfText"]')
-        if job_out_el:
-            current_out_text = job_out_el.get_text(strip=True)
-            print(f"Currently showing: {current_out_text}")
-        else:
-            current_out_text = None
-            print("No job count indicator found on this page.")
-
+        job_tags = soup.select("a[data-automation-id='jobTitle']")
         
-        if current_out_text and current_out_text == prev_out_text:
-            print("Pagination appears stuck (jobOutOfText is the same). Breaking out.")
-            break
-        prev_out_text = current_out_text
+        new_links = 0
+        for tag in job_tags:
+            href = tag.get("href")
+            if href:
+                full_url = urljoin(start_url, href)
+                if full_url not in job_urls:
+                    job_urls[full_url] = page_num
+                    new_links += 1
+        print(f"Found {new_links} new links on page {page_num}; total unique links so far: {len(job_urls)}.")
 
-        # Collect all job links
-        job_links = soup.select('a[data-automation-id="jobTitle"]')
-        if not job_links:
-            print(f"No job links found on this page for {company_name}. Stopping.")
-            break
-
-        print(f"Found {len(job_links)} jobs on this page.")
-
-        # for each job scrape details
-        for link_tag in job_links:
-            partial_href = link_tag.get("href")
-            if not partial_href:
-                continue
-
-            job_url = urljoin(start_url, partial_href)
-            print(f"Scraping job detail => {job_url}")
-
-            # Load detail page
-            driver.get(job_url)
-            try:
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, "[data-automation-id='jobPostingHeader']"))
-                )
-            except:
-                print(f"Timeout on detail page: {job_url}")
-                continue
-
-            detail_soup = BeautifulSoup(driver.page_source, "html.parser")
-
-            # Extract title, location, posted date, description
-            title_el = detail_soup.select_one('[data-automation-id="jobPostingHeader"]')
-            job_title = title_el.get_text(strip=True) if title_el else None
-
-            # Posted date
-            posted_block = detail_soup.select_one('[data-automation-id="postedOn"]')
-            if posted_block:
-                posted_dd = posted_block.select_one('dd')
-                posted_date = posted_dd.get_text(strip=True) if posted_dd else None
-            else:
-                posted_date = None
-
-            # Location
-            loc_block = detail_soup.select_one('[data-automation-id="locations"]')
-            if loc_block:
-                dd_tags = loc_block.select("dd")
-                job_location = ", ".join(dd.get_text(strip=True) for dd in dd_tags) if dd_tags else None
-            else:
-                job_location = None
-
-            # Description
-            desc_el = detail_soup.select_one('[data-automation-id="jobPostingDescription"]')
-            job_desc = desc_el.get_text("\n", strip=True) if desc_el else None
-
-            # Store in results
-            results.append({
-                "company": company_name,
-                "url": job_url,
-                "title": job_title,
-                "posted_date": posted_date,
-                "location": job_location,
-                "description": job_desc
-            })
-
-            driver.back()
-            time.sleep(2)  # wait time after returning to listing
-
-        # navigate to next page 
-        page_num += 1
-        
-       
-        next_page_found = False
-        
+        # Attempt to click the "Next" button
         try:
-            page_btn_selector = f"button[aria-label='page {page_num}']"
-            page_btn = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, page_btn_selector))
+            next_btn = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "button[aria-label='next']"))
             )
-            print(f"Found button for page {page_num}, clicking it...")
-            driver.execute_script("arguments[0].scrollIntoView(true);", page_btn)
-            time.sleep(1)
-            page_btn.click()
-            next_page_found = True
-            
+            if next_btn.get_attribute("aria-disabled") == "true":
+                print("Next button is disabled. Reached the last page.")
+                break
+            print("Clicking Next button to load the next page...")
+            next_btn.click()
+            time.sleep(3)  # Wait for next page to load
         except Exception as e:
-            print(f"Couldn't find direct link to page {page_num}: {e}")
-            
-            # finding and clicking the next button
-            try:
-                next_btn = WebDriverWait(driver, 5).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[aria-label='next']"))
-                )
-                
-                # check if the next button is disabled
-                if next_btn.get_attribute("aria-disabled") == "true":
-                    print("Next button is disabled. We're on the last page.")
-                    break
-                    
-                print("Clicking 'next' button...")
-                driver.execute_script("arguments[0].scrollIntoView(true);", next_btn)
-                time.sleep(1)
-                next_btn.click()
-                next_page_found = True
-                
-            except Exception as e2:
-                print(f"Couldn't find or click 'next' button: {e2}")
-                try:
-                    current_page_btn = WebDriverWait(driver, 3).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, "button[aria-current='page']"))
-                    )
-                    current_page_num = current_page_btn.get_attribute("aria-label").replace("page ", "")
-                    print(f"Currently on page {current_page_num}")
-                    
-                    # find all pagination buttons
-                    pagination_parent = driver.find_element(By.CSS_SELECTOR, "nav[aria-label='pagination']")
-                    page_buttons = pagination_parent.find_elements(By.TAG_NAME, "button")
-                    
-                    for btn in page_buttons:
-                        if btn.get_attribute("aria-label") == f"page {int(current_page_num) + 1}":
-                            print(f"Found button for page {int(current_page_num) + 1}, clicking it...")
-                            driver.execute_script("arguments[0].scrollIntoView(true);", btn)
-                            time.sleep(1)
-                            btn.click()
-                            next_page_found = True
-                            break
-                except:
-                    print("All pagination strategies failed")
-        
-        # break out of loop if no next page was found
-        if not next_page_found:
-            print("No next page found. Ending pagination.")
+            print(f"No Next button found or error clicking it: {e}. Ending pagination.")
             break
-        
-        # wait for the new page to load
-        time.sleep(4)
-        
+
+        page_num += 1
+
+    return job_urls
+
+
+def scrape_workday_listings(driver, company_name, start_url):
+   
+    print(f"\nGathering job listing URLs for {company_name} ...")
+    job_dict = gather_all_workday_links(driver, start_url)
+    print(f"Collected {len(job_dict)} unique job URLs for {company_name}.")
+
+    results = []
+    for url, page_found in job_dict.items():
+        print(f"Scraping job detail => {url} (from page {page_found})")
+        driver.get(url)
         try:
             WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "[data-automation-id='jobOutOfText']"))
+                EC.presence_of_element_located((By.CSS_SELECTOR, "[data-automation-id='jobPostingHeader']"))
             )
-            
-            new_soup = BeautifulSoup(driver.page_source, "html.parser")
-            new_job_out_el = new_soup.select_one('[data-automation-id="jobOutOfText"]')
-            new_out_text = new_job_out_el.get_text(strip=True) if new_job_out_el else None
-            
-            if new_out_text == prev_out_text:
-                print("Page didn't change after navigation attempt. Breaking out of pagination loop.")
-                break
-                
-        except:
-            print("Couldn't verify page change. Continuing anyway...")
+        except Exception as e:
+            print(f"Timeout waiting for job detail at {url}: {e}")
+            continue
 
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        
+        # Extract Title
+        title_el = soup.select_one('[data-automation-id="jobPostingHeader"]')
+        job_title = title_el.get_text(strip=True) if title_el else None
+
+        # Extract Posted Date
+        posted_block = soup.select_one('[data-automation-id="postedOn"]')
+        if posted_block:
+            posted_dd = posted_block.select_one("dd")
+            posted_date = posted_dd.get_text(strip=True) if posted_dd else None
+        else:
+            posted_date = None
+
+        # Extract Location
+        loc_block = soup.select_one('[data-automation-id="locations"]')
+        if loc_block:
+            dd_tags = loc_block.select("dd")
+            location = ", ".join(dd.get_text(strip=True) for dd in dd_tags) if dd_tags else None
+        else:
+            location = None
+
+        # Extract Description
+        desc_el = soup.select_one('[data-automation-id="jobPostingDescription"]')
+        description = desc_el.get_text("\n", strip=True) if desc_el else None
+
+        results.append({
+            "company": company_name,
+            "url": url,
+            "title": job_title,
+            "posted_date": posted_date,
+            "location": location,
+            "description": description,
+            "page_found": page_found  # stored the page number for debugging
+        })
+    
     return results
-
 
 def main():
     chrome_options = Options()
@@ -208,35 +117,31 @@ def main():
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--allow-insecure-localhost")
     driver = webdriver.Chrome(options=chrome_options)
-
+    
     all_jobs = []
-
-
+    
     for entry in company_urls:
-        print("The length of company_urls is: ", len(company_urls))
-        name = entry["company_name"]
-        url = entry["url"]
-        print(f"\nScraping {name} from {url}")
-
+        company_name = entry["company_name"]
+        start_url = entry["url"]
+        print(f"\nScraping {company_name} from {start_url}")
+        
         try:
-            company_jobs = scrape_workday(driver, name, url)
+            company_jobs = scrape_workday_listings(driver, company_name, start_url)
             all_jobs.extend(company_jobs)
-            print(f"Collected {len(company_jobs)} jobs from {name}")
+            print(f"Collected {len(company_jobs)} jobs from {company_name}")
         except Exception as e:
-            print(f"Error scraping {name}: {e}")
-
+            print(f"Error scraping {company_name}: {e}")
+    
     driver.quit()
-
-    # saving to CSV
+    
+    # Save results to CSV
     with open("workday_jobs.csv", "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "company","url","title","posted_date","location","description"
-        ])
+        fieldnames = ["company", "url", "title", "posted_date", "location", "description", "page_found"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(all_jobs)
-
+    
     print(f"\nDone. Collected {len(all_jobs)} total jobs.")
-
 
 if __name__ == "__main__":
     main()
