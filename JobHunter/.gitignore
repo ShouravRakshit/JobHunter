@@ -68,7 +68,6 @@ data/
 *.json
 
 # Ignore project diagrams
-*.png
 *.jpg
 *.jpeg
 *.svg
