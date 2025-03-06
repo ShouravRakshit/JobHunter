@@ -1,7 +1,7 @@
 import time
 import csv
 from urllib.parse import urljoin
-
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -134,8 +134,12 @@ def main():
     
     driver.quit()
     
+    data_folder = os.path.join(os.path.dirname(__file__), "..", "..", "..", "data")
+    csv_path = os.path.join(data_folder, "raw_jobs.csv")
+    print(f"Saving CSV to: {csv_path}")
+
     # Save results to CSV
-    with open("workday_jobs.csv", "w", newline="", encoding="utf-8") as f:
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
         fieldnames = ["company", "url", "title", "posted_date", "location", "description", "page_found"]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
