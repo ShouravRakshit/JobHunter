@@ -1,5 +1,18 @@
 company_urls = [
     {
+        "company_name": "AVEVA",
+        "url": "https://aveva.wd3.myworkdayjobs.com/en-GB/AVEVA_careers"
+    
+    },
+    {
+         "company_name": "Ontario Health",
+         "url": "https://oh.wd3.myworkdayjobs.com/OH"
+    },
+    {
+        "company_name": "dentsu",
+        "url": "https://dentsuaegis.wd3.myworkdayjobs.com/en-US/DAN_GLOBAL"
+    },
+    {
         "company_name": "Ledcor",
         "url": "https://ledcor.wd3.myworkdayjobs.com/en-US/Ledcor_External"
     },
