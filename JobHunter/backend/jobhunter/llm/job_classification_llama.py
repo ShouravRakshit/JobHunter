@@ -4,7 +4,7 @@ import re
 
 def classify_job_posting_llama(job_description, model="llama3.1:8b"):
     """
-    Calls the locally installed LLaMA model (via Ollama) to classify the job description.
+        Uses the LLaMA model to classify the job description.
     """
     # categories llm going to choose from.
     categories = [
