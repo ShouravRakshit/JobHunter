@@ -42,7 +42,7 @@ def test_faiss_query(query, index_path, mapping_path, model_name="all-MiniLM-L6-
     return results
 
 if __name__ == "__main__":
-    query_str = "looking for a data analytics job with Python and SQL skills with only 2 years of experience"
+    query_str = "looking for a data analytics job with over 6 years of experience"
     index_file = "JobHunter/data/bert_faiss_index.idx"
     mapping_file = "JobHunter/data/bert_faiss_mapping.pkl"
     
