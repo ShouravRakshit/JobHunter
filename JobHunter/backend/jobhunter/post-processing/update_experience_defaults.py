@@ -1,38 +1,40 @@
 import pandas as pd
 
-def update_not_specified(input_csv, output_csv, column_name="experience_normalized", default_value="0-5 years"):
+def update_experience_based_on_title(input_csv, output_csv, exp_column="experience_normalized", title_column="standardized_title"):
     """
-    Reads a CSV file, replaces all occurrences of "Not specified" in the specified column
-    with a default value ("0-5 years"), and saves the updated DataFrame to a new CSV file.
-
-    Parameters:
-      - input_csv (str): Path to the input CSV file.
-      - output_csv (str): Path where the updated CSV will be saved.
-      - column_name (str): Name of the column to update (default: "experience_normalized").
-      - default_value (str): The default value to use (default: "0-5 years").
+    Reads a CSV file and updates the experience information:
+      - For rows with "Not specified" in the experience column:
+          - If the standardized title contains managerial keywords, sets it to "5+ years".
+          - Otherwise, sets it to "0-5 years".
+    The updated data is saved to a new CSV file.
     """
-    # Read the CSV file into a DataFrame
+    # Load the CSV file into a DataFrame
     df = pd.read_csv(input_csv)
     
-    # Count rows with "Not specified" before the update (for logging)
-    count_before = df[df[column_name] == "Not specified"].shape[0]
-    print(f"Rows with 'Not specified' before update: {count_before}")
+    # Define managerial keywords that indicate a higher level role.
+    managerial_keywords = ["manager", "director", "executive", "tech-lead", "head",  "senior"]
     
-    # Replace "Not specified" with the default value
-    df.loc[df[column_name] == "Not specified", column_name] = default_value
-    
-    # Count how many rows now have the default value
-    count_after = df[df[column_name] == default_value].shape[0]
-    print(f"Rows updated to '{default_value}': {count_after}")
+    def update_experience(row):
+        current_exp = row[exp_column]
+        job_title = str(row[title_column]).lower()
+        if current_exp == "Not specified":
+            if any(kw in job_title for kw in managerial_keywords):
+                return "5+ years"
+            else:
+                return "0-5 years"
+        return current_exp
+
+    # Apply the update function to each row
+    df[exp_column] = df.apply(update_experience, axis=1)
     
     # Save the updated DataFrame to a new CSV file
     df.to_csv(output_csv, index=False)
     print(f"Updated CSV saved to {output_csv}")
 
 def main():
-    input_csv = "JobHunter/data/jobs_with_experience_normalized.csv"  # Your current CSV file
-    output_csv = "JobHunter/data/jobs_with_experience_normalized_updated.csv"  # New file with defaults updated
-    update_not_specified(input_csv, output_csv)
+    input_csv = "JobHunter/data/jobs_with_experience_normalized.csv"
+    output_csv = "JobHunter/data/jobs_with_experience_normalized_updated.csv"
+    update_experience_based_on_title(input_csv, output_csv)
 
 if __name__ == "__main__":
     main()
