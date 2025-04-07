@@ -5,6 +5,10 @@ company_urls = [
     
     },
     {
+        "company_name": "AltaGas",
+        "url": "https://wgl.wd5.myworkdayjobs.com/en-US/AltaGas/"
+    },
+    {
          "company_name": "Ontario Health",
          "url": "https://oh.wd3.myworkdayjobs.com/OH"
     },

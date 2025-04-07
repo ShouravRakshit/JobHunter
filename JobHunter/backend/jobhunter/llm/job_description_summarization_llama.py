@@ -10,7 +10,7 @@ def summarize_job_description(job_description, model="llama3.1:8b"):
       job_description (str): The cleaned job description text.
       
     Returns:
-      str: A concise summary (2-3 sentences) of the job posting.
+      str: A concise summary (3-4 sentences) of the job posting.
     """
     # Build the prompt.
     # the model to produce a concise summary that captures key details.
