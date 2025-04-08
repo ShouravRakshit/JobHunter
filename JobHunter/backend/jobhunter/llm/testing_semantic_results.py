@@ -18,22 +18,22 @@ def test_faiss_query(query, index_path, mapping_path, model_name="all-MiniLM-L6-
     Returns:
       A list of tuples (row_index, metadata record) for the top_k closest job postings.
     """
-    # 1. Load FAISS index
+    # Load FAISS index
     index = faiss.read_index(index_path)
     
-    # 2. Load the metadata mapping
+    # Load the metadata mapping
     with open(mapping_path, "rb") as f:
         mapping = pickle.load(f)  # mapping is a list of dicts
     
-    # 3. Embed the query with SentenceTransformers
+    # Embed the query with SentenceTransformers
     model = SentenceTransformer(model_name)
     query_embedding = model.encode([query])
     query_embedding = np.array(query_embedding).astype("float32")
     
-    # 4. Search the FAISS index for the top_k nearest neighbors
+    # Search the FAISS index for the top_k nearest neighbors
     distances, indices = index.search(query_embedding, top_k)
     
-    # 5. Retrieve the metadata for each index along with its row number.
+    # Retrieve the metadata for each index along with its row number.
     results = []
     for idx in indices[0]:
         record = mapping[idx]
