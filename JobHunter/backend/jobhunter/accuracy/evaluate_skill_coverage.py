@@ -22,9 +22,7 @@ def evaluate_skill_coverage(input_csv, output_csv, text_col="cleaned_description
         job_text = str(row.get(text_col, "")).lower()
         skills_str = str(row.get(skill_col, ""))
         
-        # Convert extracted skills into a list, assuming comma-separated
-        # Example: "spring, access, leadership" -> ["spring", "access", "leadership"]
-        # You might need to adjust how you parse it if your file uses different separators.
+
         skill_list = [s.strip().lower() for s in skills_str.split(",") if s.strip()]
         
         if not skill_list:
