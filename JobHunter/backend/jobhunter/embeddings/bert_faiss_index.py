@@ -7,10 +7,18 @@ from sentence_transformers import SentenceTransformer
 def build_faiss_index(input_csv, index_output_path, mapping_output_path,
                       model_name="all-MiniLM-L6-v2"):
     """
-    Reads job postings from a CSV file, combines multiple columns (cleaned_description,
-    extracted_skills, experience_normalized) into a single text field, generates
-    BERT-based embeddings using SentenceTransformers, builds a FAISS index,
+    Reads job postings from a CSV file, combines multiple columns into a single text field,
+    generates BERT-based embeddings using SentenceTransformers, builds a FAISS index,
     and saves both the index and a mapping of metadata to disk.
+    
+    The mapping now includes:
+      - title
+      - cleaned_description
+      - experience_normalized
+      - extracted_skills
+      - combined_text
+    
+    This ensures the semantic search endpoint returns all the required fields.
     
     Parameters:
       - input_csv (str): Path to the CSV file containing job postings.
@@ -24,9 +32,13 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     # 1. Load the job postings data
     df = pd.read_csv(input_csv)
     
-    #  merges important columns.
-    #  "cleaned_description", "extracted_skills", "experience_normalized"
+    # 2. Create a combined text field that merges important columns.
+    #    Here we combine:
+    #      - cleaned_description
+    #      - extracted_skills
+    #      - experience_normalized
     df["combined_text"] = (
+          df["title"].fillna("") + " " +
         df["cleaned_description"].fillna("") + " " +
         df["extracted_skills"].fillna("") + " " +
         df["experience_normalized"].fillna("")
@@ -34,7 +46,7 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     
     texts = df["combined_text"].tolist()
     
-    # Initialize the SentenceTransformer model (a BERT-based model)
+    # 3. Initialize the SentenceTransformer model (a BERT-based model)
     model = SentenceTransformer(model_name)
     print(f"Generating embeddings using model '{model_name}' ...")
     embeddings = model.encode(texts, show_progress_bar=True)
@@ -44,23 +56,24 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     num_docs, d = embeddings.shape
     print(f"Generated embeddings for {num_docs} documents with dimension {d}.")
     
-    # Build a FAISS index (using a simple L2 distance index)
+    # 4. Build a FAISS index using a flat L2 (Euclidean distance) index.
     index = faiss.IndexFlatL2(d)
     index.add(embeddings)
     print(f"FAISS index built with {index.ntotal} vectors.")
     
-    # Save the FAISS index to disk
+    # 5. Save the FAISS index to disk
     faiss.write_index(index, index_output_path)
     print(f"FAISS index saved to {index_output_path}.")
     
-    #  Save a mapping of each row to job metadata (e.g., title and combined_text)
-    #    so you can retrieve the full posting from a FAISS search result
-    mapping = df[['title', "combined_text"]].to_dict('records')
+    # 6. Save a mapping of each row to job metadata.
+    #    Include all fields you want to show in your semantic search results.
+    mapping = df[['title', 'cleaned_description', 'experience_normalized', 'extracted_skills', 'combined_text']].to_dict('records')
     with open(mapping_output_path, "wb") as f:
         pickle.dump(mapping, f)
     print(f"Mapping saved to {mapping_output_path}.")
 
 def main():
+    # Update these paths as needed
     input_csv = "JobHunter/data/jobs_with_experience_normalized_updated.csv"
     index_output_path = "JobHunter/data/bert_faiss_index.idx"
     mapping_output_path = "JobHunter/data/bert_faiss_mapping.pkl"
