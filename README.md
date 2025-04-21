@@ -1,64 +1,48 @@
-JobHunter: Automated Job Scraper for Workday-Powered Career Portals
-Overview
+# **JobHunter: Automated Job Scraper for Workday-Powered Career Portals**
+
+# **Overview**
 JobHunter is an end-to-end system designed to automate the collection and analysis of job postings from Workday-powered career portals. The project scrapes verified job listings, cleans and preprocesses the collected text using Natural Language Processing (NLP) techniques, and provides structured insights for job seekers and recruiters. By focusing initially on the local job market (a "Canada-first" approach), JobHunter enhances job discovery and matching, overcoming many of the shortcomings found on traditional platforms like LinkedIn or Indeed.
 
-Features
-Web Scraping:
+# **Features**
+- Web Scraping:
 Utilizes Scrapy, Selenium, and BeautifulSoup to dynamically extract job postings from over 35 Workday-powered websites.
 
-Data Cleaning & Preprocessing:
+- Data Cleaning & Preprocessing:
 Removes HTML tags, special characters, and irrelevant content from raw job texts using BeautifulSoup, NLTK, and spaCy. Standardizes job titles and extracts relevant skills via Named Entity Recognition (NER).
 
-Experience Extraction:
+- Experience Extraction:
 Implements both LLM-based and rule-based methods to extract and normalize experience requirements, defaulting to "0-5 years" for most roles and "5+ years" for managerial positions.
 
-Semantic Search:
+- Semantic Search:
 Leverages SentenceTransformer (BERT-based embeddings) and FAISS to generate embeddings from a combined text field (including job title, description, extracted skills, and experience). Enables rapid semantic search across the dataset.
 
-API Backend:
-Built using Django REST Framework, the API provides endpoints for:
+# **Backend**
+- Built using Django REST Framework, the API provides endpoints for:
 
-Listing jobs with industry and experience filters (e.g., /api/jobs/).
+- Listing jobs with industry and experience filters (e.g., /api/jobs/).
 
-Retrieving detailed job information (e.g., /api/jobs/<job_id>/).
+- Retrieving detailed job information (e.g., /api/jobs/<job_id>/).
 
-Performing semantic search queries (e.g., /api/search/?q=...&top_k=...).
+- Performing semantic search queries (e.g., /api/search/?q=...&top_k=...).
 
-Frontend Integration:
-A React-based interface demonstrates interactive filtering and semantic search, allowing users to quickly access and explore relevant job postings.
+# **Frontend**
+- A React-based interface demonstrates interactive filtering and semantic search, allowing users to quickly access and explore relevant job postings.
 
-Project Structure
-php
-Copy
-JobHunter/
-├── backend/
-│   └── jobhunter/
-│       ├── api/
-│       │   ├── __init__.py
-│       │   ├── apps.py
-│       │   ├── urls.py
-│       │   ├── views.py
-│       │   └── utils.py          # Loads CSV data, FAISS index, and builds embeddings
-│       ├── settings.py           # Django settings, including BASE_DIR and DATA_DIR definitions
-│       ├── urls.py               # Project URL configuration
-│       └── wsgi.py
-├── data/                         # Contains CSV files, FAISS index, and mapping pickle files
-│   ├── jobs_with_experience_normalized_updated.csv
-│   ├── bert_faiss_index.idx
-│   └── bert_faiss_mapping.pkl
-├── frontend/                     # React front end code
-│   ├── public/
-│   └── src/
-│       └── App.js                # Main React component
-├── README.md                     # (This file)
-└── requirements.txt              # Python dependencies (Django, faiss, pandas, etc.)
-Installation
-Clone the Repository:
 
-bash
-Copy
-git clone <repo_url>
+# **Installation**
+## Clone the Repository:
+
+1. Open a terminal and clone the repository using Git:
+
+```
+git clone https://github.com/ShouravRakshit/JobHunter.git
+```
+
+2. Navigate to the cloned repository:
+```
 cd JobHunter
+```
+
 Set Up the Backend:
 
 Create and activate a Python virtual environment:
