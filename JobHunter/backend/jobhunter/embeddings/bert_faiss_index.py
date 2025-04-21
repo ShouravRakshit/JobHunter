@@ -11,32 +11,19 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     generates BERT-based embeddings using SentenceTransformers, builds a FAISS index,
     and saves both the index and a mapping of metadata to disk.
     
-    The mapping now includes:
+    The mapping includes:
       - title
       - cleaned_description
       - experience_normalized
       - extracted_skills
       - combined_text
-    
-    This ensures the semantic search endpoint returns all the required fields.
-    
-    Parameters:
-      - input_csv (str): Path to the CSV file containing job postings.
-      - index_output_path (str): File path where the FAISS index will be saved.
-      - mapping_output_path (str): File path where the metadata mapping (pickle) will be saved.
-      - model_name (str): The SentenceTransformer model to use (default: "all-MiniLM-L6-v2").
-    
+
     Returns:
       None (the FAISS index and mapping are saved to disk).
     """
-    # 1. Load the job postings data
+    # Load the job postings data
     df = pd.read_csv(input_csv)
     
-    # 2. Create a combined text field that merges important columns.
-    #    Here we combine:
-    #      - cleaned_description
-    #      - extracted_skills
-    #      - experience_normalized
     df["combined_text"] = (
           df["title"].fillna("") + " " +
         df["cleaned_description"].fillna("") + " " +
@@ -46,7 +33,7 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     
     texts = df["combined_text"].tolist()
     
-    # 3. Initialize the SentenceTransformer model (a BERT-based model)
+    # Initialize the SentenceTransformer model (a BERT-based model)
     model = SentenceTransformer(model_name)
     print(f"Generating embeddings using model '{model_name}' ...")
     embeddings = model.encode(texts, show_progress_bar=True)
@@ -56,17 +43,16 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     num_docs, d = embeddings.shape
     print(f"Generated embeddings for {num_docs} documents with dimension {d}.")
     
-    # 4. Build a FAISS index using a flat L2 (Euclidean distance) index.
+    # Build a FAISS index using a flat L2 (Euclidean distance) index.
     index = faiss.IndexFlatL2(d)
     index.add(embeddings)
     print(f"FAISS index built with {index.ntotal} vectors.")
     
-    # 5. Save the FAISS index to disk
+    # Save the FAISS index to disk
     faiss.write_index(index, index_output_path)
     print(f"FAISS index saved to {index_output_path}.")
     
-    # 6. Save a mapping of each row to job metadata.
-    #    Include all fields you want to show in your semantic search results.
+    # Save a mapping of each row to job metadata.
     mapping = df[['title', 'cleaned_description', 'experience_normalized', 'extracted_skills', 'combined_text']].to_dict('records')
     with open(mapping_output_path, "wb") as f:
         pickle.dump(mapping, f)
