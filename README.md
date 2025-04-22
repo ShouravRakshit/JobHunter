@@ -79,12 +79,12 @@ npm install
 # **Usage**
 
 ## Running the Backend API
-In the backend folder (JobHunter/backend/jobhunter), start the Django server:
+In the backend folder (JobHunter/backend/jobhunter), start the Django server
 ```
 python manage.py runserver
 ```
 
-## The API endpoints will be accessible at:
+## The API endpoints will be accessible at
 
 List Jobs
 ```
@@ -101,7 +101,7 @@ http://localhost:8000/api/search/?q=your_query&top_k=5
 ```
 
 ## Running the Frontend
-In the frontend folder (JobHunter/frontend), start the React development server:
+In the frontend folder (JobHunter/frontend), start the React development server
 ```
 npm start
 ```
