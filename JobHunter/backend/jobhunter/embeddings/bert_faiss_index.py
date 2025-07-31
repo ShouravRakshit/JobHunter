@@ -59,7 +59,7 @@ def build_faiss_index(input_csv, index_output_path, mapping_output_path,
     print(f"Mapping saved to {mapping_output_path}.")
 
 def main():
-    # Update these paths as needed
+    
     input_csv = "JobHunter/data/jobs_with_experience_normalized_updated.csv"
     index_output_path = "JobHunter/data/bert_faiss_index.idx"
     mapping_output_path = "JobHunter/data/bert_faiss_mapping.pkl"
