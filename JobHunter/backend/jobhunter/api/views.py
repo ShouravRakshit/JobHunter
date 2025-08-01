@@ -3,10 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_list_or_404
-
-from .utils import JOB_POSTINGS, FAISS_INDEX, MAPPING, embed_query
-import faiss
+from .utils import JOB_POSTINGS, embed_query 
 import numpy as np
+from ml_loader import load_faiss
 
 class JobListView(APIView):
     """
@@ -21,14 +20,14 @@ class JobListView(APIView):
         filtered = []
         for job in JOB_POSTINGS:
             # Convert fields to lowercase for comparison
-            job_industry = str(job.get('llm_category', '')).lower()  # or whatever column has industry info
+            job_industry = str(job.get('llm_category', '')).lower()  
             job_experience = str(job.get('experience_normalized', '')).lower()
 
-            # Check if industry matches (if provided)
+            # Check if industry matches 
             if industry and industry not in job_industry:
                 continue
 
-            # Check if experience matches (if provided)
+            # Check if experience matches 
             if experience and experience not in job_experience:
                 continue
 
@@ -48,19 +47,12 @@ class JobSemanticSearchView(APIView):
         if not query:
             return Response({"detail": "No query provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not FAISS_INDEX:
-            return Response({"detail": "FAISS index not loaded."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Load the index + mapping 
+        index, mapping = load_faiss()
 
-        # Embed the query
         query_vec = embed_query(query)
-        # Perform FAISS search
-        distances, indices = FAISS_INDEX.search(query_vec, top_k)
-
-        results = []
-        for idx in indices[0]:
-            job_data = MAPPING[idx]  # MAPPING might have 'combined_text' or minimal fields
-            # If you want to link this MAPPING entry back to JOB_POSTINGS, you need a consistent ID
-            results.append(job_data)
+        distances, indices = index.search(query_vec, top_k)
+        results = [mapping[i] for i in indices[0]]
 
         return Response(results, status=status.HTTP_200_OK)
 
@@ -70,8 +62,7 @@ class JobDetailView(APIView):
     Return a single job posting by ID or index in ephemeral data.
     """
     def get(self, request, job_id):
-        # job_id is the index in ephemeral data or some unique ID if you stored it
-        # For simplicity, treat it like an index in JOB_POSTINGS
+        
         if job_id < 0 or job_id >= len(JOB_POSTINGS):
             return Response({"detail": "Job not found."}, status=status.HTTP_404_NOT_FOUND)
         
