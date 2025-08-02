@@ -209,13 +209,17 @@ function App() {
     }
   };
 
+
   // Fetch filtered jobs from /api/jobs/
   const fetchJobs = async (industry, experience) => {
     setIsLoading(true);
     setActiveFilter({ industry, experience });
     
     // Build endpoint: /api/jobs/?industry=Data%20Science&experience=0-5%20years
-    let url = "/api/jobs/";
+    // let url = "/api/jobs/";
+    // .get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/product`)
+
+    let url = `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/jobs/`;
     const params = new URLSearchParams();
     if (industry) params.append("industry", industry);
     if (experience) params.append("experience", experience);
@@ -242,7 +246,7 @@ function App() {
     setIsLoading(true);
     setActiveFilter(null);
     
-    const url = `/api/search/?q=${encodeURIComponent(query)}&top_k=${topK}`;
+    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/search/?q=${encodeURIComponent(query)}&top_k=${topK}`;
     try {
       const res = await fetch(url);
       if (!res.ok) {
