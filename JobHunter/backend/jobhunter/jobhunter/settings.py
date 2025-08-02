@@ -24,7 +24,7 @@ DATA_DIR   = REPO_ROOT / "data"
 SECRET_KEY = 'django-insecure-cp6y08y1_yak1m48tyb$ktk_dxj^xoa_=!f2@fifyir0_y@dqs'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
