@@ -58,7 +58,13 @@ source .venv/Scripts/activate    # On Windows: .venv\Scripts\activate.bat
 pip install -r requirements.txt
 ```
 
-3. Apply Django migrations:
+## Data Processing
+```
+nlp_models -> extract_keywords -> keyword_extraction_tf_idf -> extract_locations -> llm -> job_classification_llama -> job_description_summarization_llama -> extract_experience_llm 
+-> normalize_experience -> update_experience_defaults -> bert_faiss_index -> rule_based_experience
+```
+
+Apply Django migrations:
 
 ```
 python manage.py migrate
