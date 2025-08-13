@@ -49,7 +49,7 @@ cd JobHunter
 
 ```
 python -m venv .venv
-source .venv/bin/activate    # On Windows: .venv\Scripts\activate
+source .venv/Scripts/activate    # On Windows: .venv\Scripts\activate.bat
 ```
 
 2. Install the dependencies:
