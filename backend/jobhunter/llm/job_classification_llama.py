@@ -83,7 +83,7 @@ Job Description:
 
 def main():
     input_csv = "JobHunter/data/jobs_with_tfidf_keywords.csv"
-    output_csv = "JobHunter/data/unclean_jobs_with_llm_categories.csv"
+    output_csv = "JobHunter/data/jobs_with_llm_categories.csv"
 
     with open(input_csv, newline="", encoding="utf-8") as fin, \
          open(output_csv, "w", newline="", encoding="utf-8") as fout:

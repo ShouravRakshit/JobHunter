@@ -38,7 +38,7 @@ def extract_experience(text):
     return "0 years"
 
 def main():
-    input_csv = "JobHunter/data/jobs_with_experience_normalized_updated.csv"  # Change to your CSV file with job postings
+    input_csv = "JobHunter/data/jobs_with_experience_normalized_updated.csv" 
     output_csv = "JobHunter/data/rule_based_experience.csv"
     
     # Load the CSV file into a DataFrame

@@ -36,7 +36,7 @@ def normalize_experience(text):
 
 def main():
     # Define input and output CSV paths.
-    input_csv = "JobHunter/data/jobs_with_experience.csv"  # This file should be produced by extract_experience_llm.py
+    input_csv = "JobHunter/data/jobs_with_experience.csv"  
     output_csv = "JobHunter/data/jobs_with_experience_normalized.csv"
     
     # Read the CSV into a DataFrame.

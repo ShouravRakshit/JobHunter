@@ -10,10 +10,9 @@ def extract_keywords_tfidf(input_csv, output_csv, top_n=10):
     vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
     
     # Fit the vectorizer on the 'cleaned_description' and transform
-    # Fill NaNs with empty string to avoid errors
     X = vectorizer.fit_transform(df['cleaned_description'].fillna(''))
     
-    # 4) Get the list of all terms (feature names) from the vectorizer
+    # 4) Get the list of all terms from the vectorizer
     terms = vectorizer.get_feature_names_out()
     
     # We'll store the top N keywords for each job here

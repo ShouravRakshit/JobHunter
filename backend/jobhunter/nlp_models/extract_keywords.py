@@ -138,7 +138,7 @@ def extract_skills_spacy(text):
 
     # checking if each skill in SKILLS_DB is present
     for skill in SKILLS_DB:
-        # Simple approach: if the skill is exactly in the tokens
+        # if the skill is exactly in the tokens
         skill_tokens = skill.split()
         # For single-word skill, just check if skill in tokens
         if len(skill_tokens) == 1:

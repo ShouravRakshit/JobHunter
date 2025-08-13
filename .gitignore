@@ -65,7 +65,6 @@ gunicorn.conf.py
 # Ignore data storage
 data/
 *.pkl
-*.json
 
 # Ignore project diagrams
 *.jpg

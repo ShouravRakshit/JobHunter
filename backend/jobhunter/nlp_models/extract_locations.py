@@ -77,8 +77,6 @@ def parse_locations_in_csv(input_csv, output_csv):
             loc_line = row.get("location", "")
             parsed = parse_location_line(loc_line)
 
-            # Build a string like "Fort Nelson - BC | Burnaby - BC | Vancouver - BC"
-            # or if region is None, "Edmonton - Aerocentre 2 - EIA"
             pairs_str = []
             for city, region in parsed:
                 if region:
